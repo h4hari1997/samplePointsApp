@@ -4,17 +4,18 @@ import com.company.dto.Customer;
 import com.company.dto.Group;
 import com.company.exception.BalanceNotSufficientException;
 import com.company.exception.CustomerException;
+import com.company.exception.ErrorMessage;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import static com.company.dto.Group.groupIdMap;
+import static com.company.Main.groupIdMap;
 
 public class DebitTransaction extends Transaction {
 
     @Override
     public void execute(Customer cust, int points) throws CustomerException, BalanceNotSufficientException {
         if(cust == null) {
-            throw new CustomerException("Customer does not exist");
+            throw new CustomerException(ErrorMessage.CUSTOMER_NOT_EXIST);
         }
 
         String groupId = cust.getGroupId();
@@ -24,7 +25,7 @@ public class DebitTransaction extends Transaction {
             if (points <= customerPointsMap.get(cust)) {
                 updateBalance(cust, customerPointsMap.get(cust) - points);
             } else {
-                throw new BalanceNotSufficientException("Balance Not Sufficient");
+                throw new BalanceNotSufficientException(ErrorMessage.INSUFFICIENT_BALANCE);
             }
         } else {
             if(points <= customerPointsMap.get(cust)) {
@@ -33,9 +34,9 @@ public class DebitTransaction extends Transaction {
             }
             else {
                 if(points > customerPointsMap.get(cust) && points > groupPointsMap.get(group)) {
-                    throw new BalanceNotSufficientException("Balance Not Sufficient");
+                    throw new BalanceNotSufficientException(ErrorMessage.INSUFFICIENT_BALANCE);
                 } else {
-                    ArrayList<Customer> customerList = group.getCustomers();
+                    List<Customer> customerList = group.getCustomers();
                     int customerListSize = customerList.size();
                     int groupBalance = groupPointsMap.get(group);
                     updateBalance(group, groupPointsMap.get(group) - points);
