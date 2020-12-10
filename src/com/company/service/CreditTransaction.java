@@ -3,8 +3,9 @@ package com.company.service;
 import com.company.dto.Customer;
 import com.company.dto.Group;
 import com.company.exception.CustomerException;
+import com.company.exception.ErrorMessage;
 
-import static com.company.dto.Group.groupIdMap;
+import static com.company.Main.groupIdMap;
 
 public class CreditTransaction extends Transaction {
 
@@ -12,7 +13,7 @@ public class CreditTransaction extends Transaction {
     public void execute(Customer cust, int points) throws CustomerException
     {
         if(cust == null){
-            throw new CustomerException("Customer does not exist");
+            throw new CustomerException(ErrorMessage.CUSTOMER_NOT_EXIST);
         }
         updateBalance(cust,points + customerPointsMap.get(cust));
 

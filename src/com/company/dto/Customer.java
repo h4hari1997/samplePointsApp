@@ -1,20 +1,15 @@
 package com.company.dto;
 
-import java.util.HashMap;
-import java.util.Objects;
-
 public class Customer {
 
     private String customerId;
     private String name;
     private String groupId;
 
-    public static HashMap<String,Customer> customerIdMap = new HashMap<>();
-
     public Customer() {
     }
 
-    public Customer(String customerId, String name, int currentBalance, String groupId) {
+    public Customer(String customerId, String name, String groupId) {
         this.customerId = customerId;
         this.name = name;
         this.groupId = groupId;
