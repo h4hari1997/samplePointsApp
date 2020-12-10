@@ -7,6 +7,7 @@ public enum ErrorMessage {
     GROUP_ALREADY_EXIST("Group already exist"),
     CUSTOMER_ALREADY_EXIST("Customer already exist"),
     CUSTOMER_BELONGS_TO_GROUP("Customer already belongs to a group"),
+    CUSTOMER_DOESNOT_BELONG_TO_GROUP("Customer does not belong to a group"),
     INSUFFICIENT_BALANCE("Insufficient Balance"),
     GROUP_EMPTY("Group Empty"),
     GROUP_LIMIT_EXCEEDED("Group limit exceeded");

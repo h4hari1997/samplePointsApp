@@ -34,89 +34,53 @@ public class Main {
             System.out.println("Enter your option : ");
             option = sc.nextLine();
 
-            switch (option) {
-
-                case "1": {
-                    try {
+            try {
+                switch (option) {
+                    case "1": {
                         createNewGroup();
-                    } catch (GroupException e) {
-                        System.out.println(e.getMessage());
-                        e.printStackTrace();
                         break;
                     }
-                    break;
-                }
-
-                case "2": {
-                    try {
+                    case "2": {
                         createNewCustomer();
-                    } catch (CustomerException e) {
-                        System.out.println(e.getMessage());
-                        e.printStackTrace();
                         break;
                     }
-                    break;
-                }
-
-                case "3": {
-                    try {
+                    case "3": {
                         updateCustomerList(customerGroup.ADD);
-                    } catch (GroupException | CustomerException e) {
-                        System.out.println(e.getMessage());
-                        e.printStackTrace();
                         break;
                     }
-                    break;
-                }
-
-                case "4": {
-                    try {
+                    case "4": {
                         updateCustomerList(customerGroup.REMOVE);
-                    } catch (GroupException | CustomerException e) {
-                        System.out.println(e.getMessage());
-                        e.printStackTrace();
                         break;
                     }
-                    break;
-                }
-
-                case "5": {
-                    creditPoints();
-                    break;
-                }
-                case "6": {
-                    debitPoints();
-                    break;
-                }
-                case "7": {
-                    try {
+                    case "5": {
+                        creditPoints();
+                        break;
+                    }
+                    case "6": {
+                        debitPoints();
+                        break;
+                    }
+                    case "7": {
                         showCustomerBalance();
-                    } catch (CustomerException e) {
-                        System.out.println(e.getMessage());
-                        e.printStackTrace();
                         break;
                     }
-                    break;
-                }
-                case "8": {
-                    try {
+                    case "8": {
                         showGroupBalance();
-                    } catch (GroupException e) {
-                        System.out.println(e.getMessage());
-                        e.printStackTrace();
                         break;
                     }
-                    break;
+                    case "9": {
+                        System.out.println("Exiting");
+                        System.exit(0);
+                        break;
+                    }
+                    default: {
+                        System.out.println("Enter a valid option ");
+                        break;
+                    }
                 }
-                case "9": {
-                    System.out.println("Exiting");
-                    System.exit(0);
-                    break;
-                }
-                default: {
-                    System.out.println("Enter a valid option ");
-                    break;
-                }
+            } catch (GroupException | CustomerException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -124,8 +88,8 @@ public class Main {
     private static void printMenu() {
         System.out.println("1.Create a new Group");
         System.out.println("2.Create a new Customer");
-        System.out.println("3.Add Customer to a Group");
-        System.out.println("4.Remove Customer from a Group");
+        System.out.println("3.Join Group");
+        System.out.println("4.Leave Group");
         System.out.println("5.Credit Points");
         System.out.println("6.Debit Points");
         System.out.println("7.Show Customer Balance");
@@ -169,22 +133,41 @@ public class Main {
     public static void updateCustomerList(customerGroup flag) throws GroupException, CustomerException {
 
         Scanner sc = new Scanner(System.in);
-        System.out.println("Enter your Customer ID : ");
-        String customerId = sc.nextLine();
+        System.out.println("Enter number of Customers to be updated : ");
+        int n = Integer.parseInt(sc.nextLine());
         System.out.println("Enter your Group id: ");
         String groupId = sc.nextLine();
-
-        Customer customer = customerIdMap.get(customerId);
         Group group = groupIdMap.get(groupId);
 
-        checkValidity(group, customer);
+        if(n==1) {
+            System.out.println("Enter your Customer ID : ");
+            String customerId = sc.nextLine();
+            Customer customer = customerIdMap.get(customerId);
 
-        if (flag == customerGroup.ADD) {
-            addCustomerToGroup(group, customer);
+            checkValidity(group, customer);
+
+            if (flag == customerGroup.ADD) {
+                addCustomerToGroup(group, customer);
+            } else {
+                removeCustomerFromGroup(group, customer);
+            }
         } else {
-            removeCustomerFromGroup(group, customer);
+            Customer[] customers = new Customer[n];
+            for(int i=0; i<n; i++) {
+                System.out.println("Enter your Customer ID : ");
+                String customerId = sc.nextLine();
+                Customer customer = customerIdMap.get(customerId);
+                customers[i] = customer;
+                checkValidity(group, customer);
+            }
+                if (flag == customerGroup.ADD) {
+                    addCustomerToGroup(group, customers);
+                } else {
+                    removeCustomerFromGroup(group, customers);
+                }
+            }
         }
-    }
+
 
 
     public static void checkValidity(Group group, Customer customer) throws CustomerException, GroupException {
@@ -199,26 +182,44 @@ public class Main {
 
     public static void addCustomerToGroup(Group group, Customer customer) throws CustomerException, GroupException {
 
-        if (customer.getGroupId() != null) {
-            System.out.println(ErrorMessage.CUSTOMER_BELONGS_TO_GROUP);
-            return;
-        }
-
-        group.addCustomer(customer);
+        group.joinGroup(customer);
 
         int groupBalance = groupPointsMap.get(group) + customerPointsMap.get(customer);
         groupPointsMap.put(group, groupBalance);
-        customer.setGroupId(group.getGroupId());
+    }
+
+    public static void addCustomerToGroup(Group group, Customer[] customer) throws CustomerException, GroupException {
+
+        int balance = 0;
+        for(int i=0; i<customer.length; i++ ) {
+            balance += customerPointsMap.get(customer[i]);
+        }
+
+        group.joinGroup(customer);
+
+        int groupBalance = groupPointsMap.get(group) + balance;
+        groupPointsMap.put(group, groupBalance);
     }
 
     public static void removeCustomerFromGroup(Group group, Customer customer) throws CustomerException, GroupException {
 
-        group.removeCustomer(customer);
+        group.leaveGroup(customer);
 
         int groupBalance = groupPointsMap.get(group) - customerPointsMap.get(customer);
         groupPointsMap.put(group, groupBalance);
-        customer.setGroupId(null);
+    }
 
+    public static void removeCustomerFromGroup(Group group, Customer[] customer) throws CustomerException, GroupException {
+
+        int balance = 0;
+        for(int i=0; i<customer.length; i++ ) {
+            balance += customerPointsMap.get(customer[i]);
+        }
+
+        group.leaveGroup(customer);
+
+        int groupBalance = groupPointsMap.get(group) - balance;
+        groupPointsMap.put(group, groupBalance);
     }
 
     public static void creditPoints() {
