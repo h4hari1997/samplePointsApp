@@ -10,7 +10,11 @@ public enum ErrorMessage {
     CUSTOMER_DOESNOT_BELONG_TO_GROUP("Customer does not belong to a group"),
     INSUFFICIENT_BALANCE("Insufficient Balance"),
     GROUP_EMPTY("Group Empty"),
-    GROUP_LIMIT_EXCEEDED("Group limit exceeded");
+    GROUP_LIMIT_EXCEEDED("Group limit exceeded"),
+    SCHEME_ALREADY_EXIST("Scheme already exist"),
+    SCHEME_DOES_NOT_EXIST("Scheme does not exist"),
+    CUSTOMER_OPTED_SCHEME("Customer already opted a scheme"),
+    CUSTOMER_NOT_OPTED_SCHEME("Customer not opted a scheme");
 
     private String value;
 

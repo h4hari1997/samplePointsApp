@@ -5,14 +5,16 @@ public class Customer {
     private String customerId;
     private String name;
     private String groupId;
+    private Scheme scheme;
 
     public Customer() {
     }
 
-    public Customer(String customerId, String name, String groupId) {
+    public Customer(String customerId, String name, String groupId, Scheme scheme) {
         this.customerId = customerId;
         this.name = name;
         this.groupId = groupId;
+        this.scheme = scheme;
     }
 
     public String getCustomerId() {
@@ -39,5 +41,9 @@ public class Customer {
         this.groupId = groupId;
     }
 
+    public Scheme getScheme() { return this.scheme; }
 
+    public void setScheme(Scheme scheme) {
+        this.scheme = scheme;
+    }
 }

@@ -1,10 +1,7 @@
 package com.company;
 
 import com.company.dto.*;
-import com.company.exception.BalanceNotSufficientException;
-import com.company.exception.CustomerException;
-import com.company.exception.ErrorMessage;
-import com.company.exception.GroupException;
+import com.company.exception.*;
 import com.company.service.CreditTransaction;
 import com.company.service.DebitTransaction;
 import com.company.service.Transaction;
@@ -12,6 +9,7 @@ import com.company.service.Transaction;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import static com.company.dto.Scheme.schemeTypes;
 import static com.company.service.Transaction.customerPointsMap;
 import static com.company.service.Transaction.groupPointsMap;
 
@@ -45,30 +43,46 @@ public class Main {
                         break;
                     }
                     case "3": {
-                        updateCustomerList(customerGroup.ADD);
+                        createNewScheme();
                         break;
                     }
                     case "4": {
-                        updateCustomerList(customerGroup.REMOVE);
+                        removeScheme();
                         break;
                     }
                     case "5": {
-                        creditPoints();
+                        updateCustomerList(customerGroup.ADD);
                         break;
                     }
                     case "6": {
-                        debitPoints();
+                        updateCustomerList(customerGroup.REMOVE);
                         break;
                     }
                     case "7": {
-                        showCustomerBalance();
+                        joinScheme();
                         break;
                     }
                     case "8": {
-                        showGroupBalance();
+                        leaveScheme();
                         break;
                     }
                     case "9": {
+                        creditPoints();
+                        break;
+                    }
+                    case "10": {
+                        debitPoints();
+                        break;
+                    }
+                    case "11": {
+                        showCustomerBalance();
+                        break;
+                    }
+                    case "12": {
+                        showGroupBalance();
+                        break;
+                    }
+                    case "13": {
                         System.out.println("Exiting");
                         System.exit(0);
                         break;
@@ -78,7 +92,7 @@ public class Main {
                         break;
                     }
                 }
-            } catch (GroupException | CustomerException e) {
+            } catch (GroupException | CustomerException | SchemeException e) {
                 System.out.println(e.getMessage());
                 e.printStackTrace();
             }
@@ -88,13 +102,17 @@ public class Main {
     private static void printMenu() {
         System.out.println("1.Create a new Group");
         System.out.println("2.Create a new Customer");
-        System.out.println("3.Join Group");
-        System.out.println("4.Leave Group");
-        System.out.println("5.Credit Points");
-        System.out.println("6.Debit Points");
-        System.out.println("7.Show Customer Balance");
-        System.out.println("8.Show Group Balance");
-        System.out.println("9.Exit");
+        System.out.println("3.Create a new Scheme");
+        System.out.println("4.Remove a Scheme");
+        System.out.println("5.Join Group");
+        System.out.println("6.Leave Group");
+        System.out.println("7.Join Scheme");
+        System.out.println("8.Leave Scheme");
+        System.out.println("9.Credit Points");
+        System.out.println("10.Debit Points");
+        System.out.println("11.Show Customer Balance");
+        System.out.println("12.Show Group Balance");
+        System.out.println("13.Exit");
     }
 
     public static void createNewGroup() throws GroupException {
@@ -129,6 +147,29 @@ public class Main {
         }
     }
 
+    public static void createNewScheme() throws SchemeException {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter scheme Id: ");
+        String schemeId = sc.nextLine().toUpperCase();
+
+        if(schemeTypes.contains(schemeId)) {
+            throw new SchemeException(ErrorMessage.SCHEME_ALREADY_EXIST);
+        } else {
+            schemeTypes.add(schemeId);
+        }
+    }
+
+    public static void removeScheme() throws SchemeException {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter scheme Id: ");
+        String schemeId = sc.nextLine().toUpperCase();
+
+        if(!schemeTypes.contains(schemeId)) {
+            throw new SchemeException(ErrorMessage.SCHEME_DOES_NOT_EXIST);
+        } else {
+            schemeTypes.remove(schemeId);
+        }
+    }
 
     public static void updateCustomerList(customerGroup flag) throws GroupException, CustomerException {
 
@@ -276,4 +317,60 @@ public class Main {
         System.out.println(groupPointsMap.get(group));
 
     }
+
+    public static void joinScheme() throws SchemeException, CustomerException {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter your Customer ID : ");
+        String customerId = sc.nextLine();
+        Customer customer = customerIdMap.get(customerId);
+
+        if(customer == null ) {
+            throw new CustomerException(ErrorMessage.CUSTOMER_NOT_EXIST);
+        }
+
+        if(customer.getScheme() != null ) {
+            throw new SchemeException(ErrorMessage.CUSTOMER_OPTED_SCHEME);
+        }
+
+        System.out.println("Enter schemeId ");
+        String schemeId = sc.nextLine().toUpperCase();
+        Scheme scheme;
+
+        if (!schemeTypes.contains(schemeId)) {
+            throw new SchemeException(ErrorMessage.SCHEME_DOES_NOT_EXIST);
+        } else {
+            if(schemeId.equalsIgnoreCase("UkClubCard")) {
+                scheme = new UKClubCard();
+            } else if(schemeId.equalsIgnoreCase("UkSavers")) {
+                scheme = new UKSavers();
+            } else if(schemeId.equalsIgnoreCase("ClubCardPlus")) {
+                scheme = new ClubCardPlus();
+            } else {
+                scheme = new ColleagueDiscount();
+            }
+            customer.setScheme(scheme);
+            scheme.joinScheme(customer);
+        }
+    }
+
+    public static void leaveScheme() throws SchemeException, CustomerException {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter your Customer ID : ");
+        String customerId = sc.nextLine();
+        Customer customer = customerIdMap.get(customerId);
+
+        if(customer == null ) {
+            throw new CustomerException(ErrorMessage.CUSTOMER_NOT_EXIST);
+        }
+
+        if(customer.getScheme() == null ) {
+            throw new SchemeException(ErrorMessage.CUSTOMER_NOT_OPTED_SCHEME);
+        }
+
+        Scheme scheme = customer.getScheme();
+
+        scheme.leaveScheme(customer);
+        customer.setScheme(null);
+    }
+
 }

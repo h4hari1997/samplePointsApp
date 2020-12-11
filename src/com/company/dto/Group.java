@@ -5,24 +5,26 @@ import com.company.exception.ErrorMessage;
 import com.company.exception.GroupException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Group {
     private String groupId;
     private List<Customer> customers;
     private int size;
+    private Scheme scheme;
 
     public Group() {
         this.groupId = null;
         this.customers = new ArrayList<>();
         this.size = 0;
+        this.scheme = null;
     }
 
-    public Group(String groupId, List<Customer> customers, int groupSize) {
+    public Group(String groupId, List<Customer> customers, int groupSize, Scheme scheme) {
         this.groupId = groupId;
         this.customers = customers;
         this.size = groupSize;
+        this.scheme = scheme;
     }
 
     public String getGroupId() {
@@ -44,6 +46,10 @@ public class Group {
     public void setCustomers(List<Customer> customers) {
         this.customers= customers;
     }
+
+    public Scheme getScheme() { return this.scheme; }
+
+    public void setScheme(Scheme scheme) { this.scheme = scheme; }
 
     //array as input
     public void joinGroup(Customer customer) throws GroupException, CustomerException {
