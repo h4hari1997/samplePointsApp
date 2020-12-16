@@ -1,39 +1,40 @@
-package com.company.dto;
+package main.java.com.company.dto;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-public class ColleagueDiscount extends Scheme {
+public class ClubCardPlus extends UKClubCard {
 
-    private static Set<Customer> colleagueDiscountCustomers;
+    private static Set<Customer> ClubCardPlusCustomers;
 
-    public ColleagueDiscount()
-    {
-        colleagueDiscountCustomers = new HashSet<>();
+    public ClubCardPlus() {
+        ClubCardPlusCustomers = new HashSet<>();
     }
 
     @Override
     public boolean isPresent(Customer customer) {
-        return colleagueDiscountCustomers.contains(customer);
+        return ClubCardPlusCustomers.contains(customer);
     }
 
     @Override
     public void joinScheme(Customer customer) {
-        colleagueDiscountCustomers.add(customer);
+        ClubCardPlusCustomers.add(customer);
     }
 
     @Override
     public void joinScheme(Customer[] customer) {
-        colleagueDiscountCustomers.addAll(Arrays.asList(customer));
+        ClubCardPlusCustomers.addAll(Arrays.asList(customer));
     }
 
     @Override
     public void leaveScheme(Customer customer) {
-        colleagueDiscountCustomers.remove(customer);
+        ClubCardPlusCustomers.remove(customer);
     }
 
     @Override
     public void leaveScheme(Customer[] customer) {
-        colleagueDiscountCustomers.removeAll(Arrays.asList(customer));
+        ClubCardPlusCustomers.removeAll(Arrays.asList(customer));
     }
 
     public String getSchemeId() {
